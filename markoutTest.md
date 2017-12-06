@@ -24,4 +24,9 @@ $ git add readme.txt
  $ git commit -m "wrote a readme file"
 //-m后面输入的是本次提交的说明，可以输入任意内容，当然最好是有意义的，这样你就能从历史记录里方便地找到改动记录。
 ```
-
+4. 补充&小结：
+- **cat** 文件名 可以读取文档内容
+- git status命令可以让我们时刻掌握仓库当前的状态
+- git diff顾名思义就是查看difference，在后面添加文件名字后就可以看到具体修改了什么，确认修改内容后就可以commit文件了。
+- 要随时掌握工作区的状态，使用git status命令。
+- 如果git status告诉你有文件被修改过，用git diff可以查看修改内容。
