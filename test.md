@@ -11,4 +11,4 @@ $ pwd
 test
 test2
 create a branch（分支）is easy.
-test the question.
+the question need slove by hand.
