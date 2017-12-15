@@ -10,3 +10,4 @@ $ pwd
 ***
 test
 test2
+create a branch（分支）is easy.
