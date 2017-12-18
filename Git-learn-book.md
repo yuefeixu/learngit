@@ -7,8 +7,10 @@
 $ mkdir learngit
 $ cd learngit
 $ pwd
-//pwd命令用于显示当前目录
-```
+//pwd命令用于显示当前目录路径
+$ ls
+//ls命令用于显示当前目录的文件
+```	
 - 将该文件夹初始化为git仓库
 ``` 
 $ git init
@@ -37,6 +39,7 @@ $ git add readme.txt
 ***
 ### 版本回退
 **git log命令显示从最近到最远的提交日志**
+*想要退出git log状态，按q即可*
 > 在Git中，用HEAD表示当前版本，也就是最新的提交3628164...882e1e0（注意我的提交ID和你的肯定不一样），上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100。
 
 现在，我们要把当前版本“append GPL”回退到上一个版本“add distributed”，就可以使用**git reset**命令：
@@ -65,13 +68,13 @@ $ git reset --hard HEAD^
 *PS：git checkout -- file命令中的--很重要，没有--，就变成了“切换到另一个分支”的命令，我们在后面的分支管理中会再次遇到git checkout命令。*
 
 ### 上传到暂存区后
-**git reset HEAD file**可以把暂存区的修改回退到工作区
+**git reset HEAD file**可以把**暂存区**的修改回退到工作区
 
 
 ###小结
 
 >场景1：当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令git checkout -- file。
-场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令git reset HEAD file，就回到了场景1，第二步按场景1操作。
+**场景2：**当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令git reset HEAD file，就回到了场景1，第二步按场景1操作。
 场景3：已经提交了不合适的修改到版本库时，想要撤销本次提交，参考版本回退一节，不过前提是没有推送到远程库。
 
 ## 删除
@@ -82,7 +85,7 @@ $ rm test.txt 可以删除该test文件
 **现在有两个选择**
 - 一是确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit
 - 另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本
-**$ git checkout -- test.txt**
+**$ git checkout - - test.txt**
 - **PS：git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。**
 
 
@@ -103,3 +106,93 @@ $ rm test.txt 可以删除该test文件
 ### 小结
 >要克隆一个仓库，首先必须知道仓库的地址，然后使用git clone命令克隆。
 Git支持多种协议，包括https，但通过ssh支持的原生git协议速度最快。
+#
+
+
+
+## 分支管理
+### 创建分支 git branch fz1
+**切换到分支**： git chenkout fz1
+查看当前分支：git branch
+*git branch命令会列出所有分支，当前分支前面会标一个*号。*
+
+注意：新创建的分支，是空的。
+### 合并分支   git merge fz1
+git merge命令用于合并指定分支到当前分支。
+
+>合并分支时，加上--no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并。
+### 删除分支 git branch -d fz1
+*删除分支需要在其他分支上进行*
+
+
+   
+###小结
+Git鼓励大量使用分支：
+查看分支：git branch
+创建分支：git branch name
+切换分支：git checkout name
+创建+切换分支：git checkout -b name
+合并某分支到当前分支：git merge name
+删除分支：git branch -d name
+
+>当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。
+用git log --graph命令可以看到分支合并图。
+
+
+
+
+### stash
+**当手头工作没有完成时，先把工作现场git stash一下，然后去修复bug，修复后，再git stash pop，回到工作现场。**
+恢复的时候，先用git stash list查看，然后恢复指定的stash，用命令：
+$ git stash apply stash@{0}
+
+### 强行删除
+开发一个新feature，最好新建一个分支；
+如果要丢弃一个没有被合并过的分支，可以通过git branch -D <name>强行删除。
+
+
+### 多人合作
+- master分支是主分支，因此要时刻与远程同步；
+- dev分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步；
+- bug分支只用于在本地修复bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个bug；
+- feature分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发。
+
+
+**多人协作的工作模式通常是这样：**
+1. 首先，可以试图用git push origin branch-name推送自己的修改；
+2. 如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
+3. 如果合并有冲突，则解决冲突，并在本地提交；
+4. 没有冲突或者解决掉冲突后，再用git push origin branch-name推送就能成功！
+>如果git pull提示“no tracking information”，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream branch-name origin/branch-name。
+这就是多人协作的工作模式，一旦熟悉了，就非常简单。
+
+## 标签管理
+创建标签：$ git tag v1.0
+
+查看标签：$ git tag
+>注意，标签不是按时间顺序列出，而是按字母排序的。可以用git show （tagname）查看标签信息：
+
+删除标签：$ git tag -d v1.0
+并从远程删除（如果有的话）$ git push origin :refs/tags/v1.0
+
+推送本地标签到远程  $ git push origin v1.0
+或一次性推送：$ git push origin --tags
+
+### 小结
+- 命令git tag <name>用于新建一个标签，默认为HEAD，也可以指定一个commit id；
+- git tag -a <tagname> -m "blablabla..."可以指定标签信息；
+- git tag -s <tagname> -m "blablabla..."可以用**PGP**签名标签；
+- 命令git tag可以查看所有标签。
+- 命令git push origin <tagname>可以推送一个本地标签；
+- 命令git push origin --tags可以推送全部未推送过的本地标签；
+- 命令git tag -d <tagname>可以删除一个本地标签；
+- 命令git push origin :refs/tags/<tagname>可以删除一个远程标签。
+
+
+
+
+
+
+
+
+
